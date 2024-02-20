@@ -1,0 +1,98 @@
+import tkinter as tk
+from tkinter import messagebox
+
+class ContactManager:
+    def __init__(l, a):
+        l.a = a
+        l.a.title("Contact Manager")
+
+        l.contacts = []
+
+        l.name_label = tk.Label(a, text="Name:")
+        l.name_label.grid(row=0, column=0, padx=10, pady=5)
+        l.name_entry = tk.Entry(a, width=30)
+        l.name_entry.grid(row=0, column=1, padx=10, pady=5)
+
+        l.phone_label = tk.Label(a, text="Phone:")
+        l.phone_label.grid(row=1, column=0, padx=10, pady=5)
+        l.phone_entry = tk.Entry(a, width=30)
+        l.phone_entry.grid(row=1, column=1, padx=10, pady=5)
+
+        l.add_button = tk.Button(a, text="Add Contact", command=l.add_contact)
+        l.add_button.grid(row=2, column=0, columnspan=2, padx=10, pady=5)
+
+        l.display_button = tk.Button(a, text="Display Contacts", command=l.display_contacts)
+        l.display_button.grid(row=3, column=0, columnspan=2, padx=10, pady=5)
+
+        l.search_button = tk.Button(a, text="Search Contact", command=l.search_contact)
+        l.search_button.grid(row=4, column=0, columnspan=2, padx=10, pady=5)
+
+        l.update_button = tk.Button(a, text="Update Contact", command=l.update_contact)
+        l.update_button.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
+
+        l.delete_button = tk.Button(a, text="Delete Contact", command=l.delete_contact)
+        l.delete_button.grid(row=6, column=0, columnspan=2, padx=10, pady=5)
+
+    def add_contact(l):
+        name = l.name_entry.get()
+        phone = l.phone_entry.get()
+        if name and phone:
+            l.contacts.append({"Name": name, "Phone": phone})
+            messagebox.showinfo("Contact Manager", "Contact added successfully!")
+            l.clear_entries()
+        else:
+            messagebox.showerror("Contact Manager", "Please enter both name and phone.")
+
+    def display_contacts(l):
+        if l.contacts:
+            contact_list = "\n".join([f"{contact['Name']}: {contact['Phone']}" for contact in l.contacts])
+            messagebox.showinfo("Contact Manager - Contacts", contact_list)
+        else:
+            messagebox.showinfo("Contact Manager - Contacts", "No contacts added yet.")
+
+    def search_contact(l):
+        name = l.name_entry.get()
+        if name:
+            found_contacts = [contact for contact in l.contacts if contact['Name'].lower() == name.lower()]
+            if found_contacts:
+                contact_list = "\n".join([f"{contact['Name']}: {contact['Phone']}" for contact in found_contacts])
+                messagebox.showinfo("Contact Manager - Search Results", contact_list)
+            else:
+                messagebox.showinfo("Contact Manager - Search Results", f"No contacts found with the name '{name}'.")
+        else:
+            messagebox.showerror("Contact Manager", "Please enter a name to search.")
+
+    def update_contact(l):
+        name = l.name_entry.get()
+        phone = l.phone_entry.get()
+        if name:
+            for contact in l.contacts:
+                if contact['Name'].lower() == name.lower():
+                    contact['Phone'] = phone
+                    messagebox.showinfo("Contact Manager", "Contact updated successfully!")
+                    l.clear_entries()
+                    return
+            messagebox.showinfo("Contact Manager", f"No contacts found with the name '{name}'.")
+        else:
+            messagebox.showerror("Contact Manager", "Please enter a name to update.")
+
+    def delete_contact(l):
+        name = l.name_entry.get()
+        if name:
+            for i, contact in enumerate(l.contacts):
+                if contact['Name'].lower() == name.lower():
+                    del l.contacts[i]
+                    messagebox.showinfo("Contact Manager", "Contact deleted successfully!")
+                    l.clear_entries()
+                    return
+            messagebox.showinfo("Contact Manager", f"No contacts found with the name '{name}'.")
+        else:
+            messagebox.showerror("Contact Manager", "Please enter a name to delete.")
+
+    def clear_entries(l):
+        l.name_entry.delete(0, tk.END)
+        l.phone_entry.delete(0, tk.END)
+
+a = tk.Tk()
+app = ContactManager(a)
+a.mainloop()
